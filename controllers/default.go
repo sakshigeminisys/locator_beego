@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-        "github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/httplib"
 	"fmt"
 	"net/http"
@@ -11,47 +10,27 @@ import (
 	"encoding/json"
 )
 
-var port = ""
-var baseUrl = "http://52.23.208.10:"
-
-
-type MainController struct {
-	beego.Controller
-}
-
-func (c *MainController) Get() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
-	c.TplName = "index.tpl"
-}
-func (main *MainController) HelloSitepoint() {
-    	main.Data["Website"] = "My Website"
-    	main.Data["Email"] = "your.email.address@example.com"
-   	main.Data["EmailName"] = "Your Name"
-    	main.Data["Id"] = main.Ctx.Input.Param(":id") 
-    	main.TplName = "default/hello-sitepoint.tpl"
-}
-
-type NodeController struct {
+type ServiceController struct {
         beego.Controller
 }
 
-func getPort() string {
-	if port == "" {
-		config, err := config.NewConfig("ini", "../conf/app.conf")
-		if err != nil {
-			return "8500"
-		}
-		port = config.String("httpport")
-		return port
-	}
-	return port
+type Message struct {
+        ID string
+        Name string
+        Port int64
+        Address string
+}
+
+type DeRegMessage struct {
+        Node string
+        ServiceID string
 }
 
 type mystruct struct {
- 	 FieldOne string `json:"field_one"`
+         FieldOne string `json:"field_one"`
 }
-func (c *NodeController) GetNodes() {
+
+func (c *ServiceController) GetNodes() {
 
 	
         req := httplib.Get("http://52.23.208.10:8500/v1/catalog/nodes")
@@ -67,21 +46,6 @@ func (c *NodeController) GetNodes() {
 	c.Data["json"] = &str
 	c.ServeJSON()
 
-}
-
-type ServiceController struct {
-        beego.Controller
-}
-type Message struct {
-    	ID string
-    	Name string
-    	Port int64
-    	Address string
-}
-
-type DeRegMessage struct {
-        Node string
-        ServiceID string
 }
 
 func (c *ServiceController) GetService() {
